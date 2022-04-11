@@ -1,28 +1,5 @@
 # admin
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
 ### eslint 配置
 
 ``` JavaScript
@@ -151,55 +128,85 @@ module.exports = {
   ```
   3. 打开 commitlint.config.js，增加配置项
   ``` JavaScript
-  module.exports = {
-    // 继承的规则
-    extends: ['@commitlint/config-conventional'],
-    // 定义规则
-    roles: {
-      // type 的类型定义: 表示git 提交的type 必须在以下类型范围之内
-      'type-enum': [
-        // 当前验证的错误级别
-        2,
-        // 在什么情况下进行验证 always: 总是
-        'always',
-        // 泛型内容： .cz-config.js types 字段
-        [
-          'feat', 'fix', 'docs', 'style', 'refactor', 'delete', 'stash',
-          'perf', 'test', 'chore', 'revert', 'build', 'conflict', 'font'
-        ]
-      ],
-      // subject 大小写不做校验
-      'subject-case': [0]
-    }
- }
-  ```
+        module.exports = {
+          // 继承的规则
+          extends: ['@commitlint/config-conventional'],
+          // 定义规则
+          roles: {
+            // type 的类型定义: 表示git 提交的type 必须在以下类型范围之内
+            'type-enum': [
+              // 当前验证的错误级别
+              2,
+              // 在什么情况下进行验证 always: 总是
+              'always',
+              // 泛型内容： .cz-config.js types 字段
+              [
+                'feat', 'fix', 'docs', 'style', 'refactor', 'delete', 'stash',
+                'perf', 'test', 'chore', 'revert', 'build', 'conflict', 'font'
+              ]
+            ],
+            // subject 大小写不做校验
+            'subject-case': [0]
+          }
+      }
+    ```
 
-- husky：是git hooks 工具
+- [husky](https://github.com/typicode/husky)：是git hooks 工具
 
   1. 安装依赖
 
-  ``` JavaScript
-    npm install husky@7.0.1 --save-dev  
-  ```
+    ``` JavaScript
+      npm install husky@7.0.1 --save-dev  
+    ```
 
   2. 启动 hooks，生成 .husky 文件夹
      
-  ``` JavaScript
-      npx husky install
-  ```
+    ``` JavaScript
+        npx husky install
+    ```
   3. 在package-json 中生成 prepare指令（npm > 7.0）
      
-  ``` JavaScript
-    npm set-script prepare "husky install"
-  ```
+    ``` JavaScript
+      npm set-script prepare "husky install"
+    ```
   4. 执行 prepare指令
      
-  ``` JavaScript
-      npm run prepare
-  ```
+    ``` JavaScript
+        npm run prepare
+    ```
 
   5. 添加 commitlint 的 hook 到 husky 中，并指令在 commit-msg 的hooks 下执行 npx --no-install commitlint --edit “$1” 指令
 
+    ``` JavaScript
+      npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
+    ```
+
+  #### pre-commit 检测提交时代码规范（husky 配合 eslint）
+  > 通过 husky 检测 pre-commit 钩子，在该钩子下执行 npx eslint --ext .js,.vue src 指令来去进行相关检测
+
+  1. 添加 commit 的 hook
+   
+   ```JavaScript
+    npx husky add .husky/pre-commit "npx eslint --ext .js,.vue src"
+   ```
+
+#### lint-staged 自动修复格式错误
+> [lint-staged](https://github.com/okonet/lint-staged) 可以让你当前代码检查 只检查本次修改更新的代码，并在出现错误的时候，自动修复并且推送，lint-staged 无需单独安装，我们生成项目时，vue-cli 已经帮我们安装过了，所以可以直接使用
+
+1. 修改 package.js 配置
+
   ``` JavaScript
-  npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
+  ...
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
+  // 符合规范会提交成功
+  // 不符合规范会自动执行 eslint --fix 尝试修复，修复成功后进行代码提交，修复失败，提示错误
+  ```
+2. 修改 .husky/pre-commit 文件
+  ``` JavaScript
+   npx lint-staged
   ```
