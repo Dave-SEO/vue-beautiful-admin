@@ -130,4 +130,76 @@ module.exports = {
       subjectLimit: 100,
 }
 ```
-4. 使用git cz 代替 git commit  
+4. 使用git cz 代替 git commit 
+
+### 使用Git Hooks(git 钩子 || git回调方法) 校验提交信息
+> 当提《交描述信息》不符合约定式提交规范时，阻止当前的提交，并抛出对应的错误提示（git 在执行某个事件之前或之后进行一些其他额外的操作，阻止不合规范的提交消息，需要使用 hooks 的钩子函数）
+
+  1. pre-commit: 会在提交前被调用，并且可以按需指定是否要拒绝本次提交
+  2. commit-msg：可以用来规范化标准格式，并且可以按需指定是否要拒绝本次提交
+
+#### 使用 husky + commitlint 检查提交描述是否符合规范要求
+- [commitlint](https://github.com/conventional-changelog/commitlint)：用于检查提交信息
+  1. 安装依赖
+  ``` JavaScript
+  npm install --save-dev @commitlint/config-conventional@12.1.4 @commitlint/cli@12.1.4
+  ```
+  2. 创建 commitlint.config.js
+
+  ``` JavaScript
+  echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
+  ```
+  3. 打开 commitlint.config.js，增加配置项
+  ``` JavaScript
+  module.exports = {
+    // 继承的规则
+    extends: ['@commitlint/config-conventional'],
+    // 定义规则
+    roles: {
+      // type 的类型定义: 表示git 提交的type 必须在以下类型范围之内
+      'type-enum': [
+        // 当前验证的错误级别
+        2,
+        // 在什么情况下进行验证 always: 总是
+        'always',
+        // 泛型内容： .cz-config.js types 字段
+        [
+          'feat', 'fix', 'docs', 'style', 'refactor', 'delete', 'stash',
+          'perf', 'test', 'chore', 'revert', 'build', 'conflict', 'font'
+        ]
+      ],
+      // subject 大小写不做校验
+      'subject-case': [0]
+    }
+ }
+  ```
+
+- husky：是git hooks 工具
+
+  1. 安装依赖
+
+  ``` JavaScript
+    npm install husky@7.0.1 --save-dev  
+  ```
+
+  2. 启动 hooks，生成 .husky 文件夹
+     
+  ``` JavaScript
+      npx husky install
+  ```
+  3. 在package-json 中生成 prepare指令（npm > 7.0）
+     
+  ``` JavaScript
+    npm set-script prepare "husky install"
+  ```
+  4. 执行 prepare指令
+     
+  ``` JavaScript
+      npm run prepare
+  ```
+
+  5. 添加 commitlint 的 hook 到 husky 中，并指令在 commit-msg 的hooks 下执行 npx --no-install commitlint --edit “$1” 指令
+
+  ``` JavaScript
+  npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
+  ```
