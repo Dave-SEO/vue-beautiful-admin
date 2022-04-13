@@ -11,7 +11,9 @@
   "dependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
+    "@element-plus/icons-vue": "^1.1.4",
     "cz-customizable": "^6.3.0",
+    "element-plus": "^2.1.9",
     "husky": "^7.0.4",
     "npm": "^8.6.0",
     "vue": "^3.2.13",
@@ -50,7 +52,10 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "space-before-function-paren": "off",
+      "indent": "off"
+    }
   },
   "lint-staged": {
     "src/**/*.{js,vue}": [

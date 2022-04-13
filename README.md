@@ -1,6 +1,6 @@
 # admin
-## 编程规范（eslint 校验及 git 提交）
-### eslint 配置
+# 编程规范（eslint 校验及 git 提交）
+## eslint 配置
 
 ``` JavaScript
  "eslintConfig": {
@@ -65,6 +65,7 @@
     ``` JavaScript
       npm i cz-customizable@6.3.0 --save -dev
     ```
+    
     2. 添加以下配置到 package.json 中
    ``` JavaScript
    ...
@@ -74,6 +75,7 @@
      }
    }
    ```
+   
 3. 项目更目录下创建 .cz-config.js 自定义提示文件
 ``` JavaScript
 module.exports = {
@@ -107,6 +109,7 @@ module.exports = {
       subjectLimit: 100,
 }
 ```
+
 4. 使用git cz 代替 git commit 
 
 ### 使用Git Hooks(git 钩子 || git回调方法) 校验提交信息
@@ -121,11 +124,12 @@ module.exports = {
   ``` JavaScript
   npm install --save-dev @commitlint/config-conventional@12.1.4 @commitlint/cli@12.1.4
   ```
+  
   2. 创建 commitlint.config.js
-
   ``` JavaScript
   echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
   ```
+  
   3. 打开 commitlint.config.js，增加配置项
   ``` JavaScript
         module.exports = {
@@ -210,3 +214,29 @@ module.exports = {
   ``` JavaScript
    npx lint-staged
   ```
+  
+### 解决git图形化工具提交失败
+  > .husky/pre-commit: Line 4 npm: command not found, 错误描述告诉我们，这是因为SourceTree找不到husky钩子中需要使用的命令。
+
+  1. 找到npm所在路径的方法
+   ```JavaScript
+     where npm
+     // /usr/local/bin/npm
+   ```
+   
+  2. 该文件默认是没有的，用以下命令自动创建文件并添加路径
+   ```JavaScript
+    echo 'export PATH="/usr/local/bin/:$PATH"' >> ~/.huskyrc
+   ```
+   
+  3. 参考：https://github.com/typicode/husky/issues/904
+# 布局
+## css reset
+[normalize.css](http://necolas.github.io/normalize.css)是一种CSS reset的替代方案，相比于传统的CSS reset, normalize.css是一种现代的、为HTML5准备的优质替代方案。
+在 assets/scss 下新建 `index.scss`、 `reset.scss`, 复制 `normalize.css`内容到 `reset.scss` 中， 并把 index.scss 引入 main.js
+
+```JavaScript
+// index.scss
+@import "reset";
+```
+  
