@@ -5,14 +5,14 @@
             <el-col :span="10" class="login-col">
                 <div class="login">
                     <h1 class="login-title">administrator</h1>
-                    <el-form>
-                        <el-form-item>
-                            <el-input type="text" v-model="state.userName" :prefix-icon="User" size="large"
+                    <el-form :model="formData" :rules="rules">
+                        <el-form-item prop="userName">
+                            <el-input type="text" v-model="formData.userName" :prefix-icon="User" size="large"
                                 placeholder="请输入用户名" />
                         </el-form-item>
-                        <el-form-item>
-                            <el-input type="password" v-model="state.pwd" :prefix-icon="Lock" size="large" show-password
-                                placeholder="请输入密码" />
+                        <el-form-item prop="pwd">
+                            <el-input type="password" v-model="formData.pwd" :prefix-icon="Lock" size="large"
+                                show-password placeholder="请输入密码" />
                         </el-form-item>
                         <el-button type="primary" round class="btn-login" size="large">登陆</el-button>
                     </el-form>
@@ -23,12 +23,19 @@
 </template>
 
 <script lang='ts' setup>
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
-const state = reactive({
-    userName: '',
-    pwd: ''
+import { userStore } from '@/store'
+const formData = ref({
+    userName: 'superAdmin',
+    pwd: '123456'
 })
+const rules = ref({
+    userName: [{ required: true, message: '请填写你的用户名', trigger: 'blur' }],
+    pwd: [{ required: true, message: '请填写你的密码', trigger: 'blur' }]
+})
+const store = userStore()
+store.login({})
 </script>
 
 <style lang="scss" scoped>

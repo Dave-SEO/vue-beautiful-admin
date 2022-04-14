@@ -237,6 +237,82 @@ module.exports = {
 
 ```JavaScript
 // index.scss
-@import "reset";
+// @import "reset";
 ```
-  
+
+# 模式和环境变量
+## 模式
+Vue CLI 项目有三个模式:
+- development 模式用于 vue-cli-service serve
+- test 模式用于 vue-cli-service test:unit
+- production 模式用于 vue-cli-service build 和 vue-cli-service test:e2e
+
+你可以通过传递 --mode 选项参数为命令行覆写默认的模式:
+
+```JavaScript
+    vue-cli-service build --mode development
+```
+
+## 环境变量
+你可以在你的项目根目录中放置下列文件来指定环境变量：
+
+```sh
+.env                # 在所有的环境中被载入
+.env.local          # 在所有的环境中被载入，但会被 git 忽略
+.env.[mode]         # 只在指定的模式中被载入
+.env.[mode].local   # 只在指定的模式中被载入，但会被 git 忽略
+```
+
+请注意，只有 NODE_ENV，BASE_URL 和以 VUE_APP_ 开头的变量将通过 webpack.DefinePlugin 静态地嵌入到客户端侧的代码中。这是为了避免意外公开机器上可能具有相同名称的私钥。
+
+## 只在本地有效的变量
+
+有的时候你可能有一些不应该提交到代码仓库中的变量，尤其是当你的项目托管在公共仓库时。这种情况下你应该使用一个 .env.local 文件取而代之。本地环境文件默认会被忽略，且出现在 .gitignore 中。
+
+.local 也可以加在指定模式的环境文件上，比如 .env.development.local 将会在 development 模式下被载入，且被 git 忽略。
+
+参考 [vuecli](https://cli.vuejs.org/zh/guide/mode-and-env.html) 介绍
+
+## 配置环境变量封装axios模块
+ 在项目根目录下新建 `.env.development`、`.env.production` 文件：
+ 
+```sh
+ VUE_APP_BASE_API = '你的请求地址'
+```
+
+在src/utils 下创建 `axios.ts` 文件：
+```JavaScript
+    import axios from 'axios'
+    const service = axios.create({
+        baseURL: process.env.VUE_APP_BASE_API,
+        timeout: 5000
+    })
+    export default service
+```
+
+这样当运行不同模式时 process.env.VUE_APP_BASE_API 指向的地址是不同的
+
+# 封装请求
+## 接口封装示例
+在 src/api 下新建 `sys.ts` 文件
+
+```JavaScript
+    import request from '@/utils/axios'
+    export const login = (data: any) => {
+        return request({
+            url: '/login',
+            method: 'post',
+            data
+        })
+    }
+```
+
+# 状态管理工具 pinia
+> 与vuex相比,[pinia](https://pinia.vuejs.org)去除了vuex中对于同步函数Mutations和异步函数Actions的区分,直接在Actions中便能够使用同步和异步方法（在vuex的开发计划中也将会除去同步和异步的区分）,其次相比于vuex，pinia对于typescript的支持性更好，友好的devTools支持
+
+## 安装
+
+```JavaScript
+ yarn add pinia
+```
+
