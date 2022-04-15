@@ -316,3 +316,51 @@ Vue CLI 项目有三个模式:
  yarn add pinia
 ```
 
+## 使用
+
+store 目录结构
+```sh
+├── src 
+│   ├── store 
+│       ├──modules      # 存放各模块的store
+│          ├─user.ts
+│       ├──index.ts     # 导出各模块store 方便使用
+```
+
+main.ts
+```JavaScript
+    ...
+    import { createPinia } from 'pinia'
+    const store = createPinia()
+    createApp(App).use(store).mount('#app')
+```
+
+user.ts
+```JavaScript
+    import { defineStore } from 'pinia'
+    export const userStore = defineStore('user', {
+        state: () => ({}),
+        getters: {},
+        actions: {}
+    })
+```
+
+index.ts
+```JavaScript
+    export * from './modules/user'
+```
+
+页面使用
+
+```JavaScript
+    import { userStore } from '@/store'
+    const store = userStore()
+    store.login({...})
+```
+# 登陆存储token
+在获取到token之后，我们会把token进行缓存，分为两种形式：
+    1. 本地缓存： token没过期时，自动登录
+    2. 全局状态管理：vuex、pinia...
+    
+
+
