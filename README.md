@@ -1,4 +1,36 @@
 # admin
+# 介绍
+## 目录结构
+
+```sh
+├── .husky                     # git 钩子函数配置
+├── public                     # 静态资源
+│   │── favicon.ico            # favicon图标
+│   └── index.html             # html模板
+├── src                        # 源代码
+│   ├── api                    # 所有请求
+│   ├── assets                 # 主题 字体等静态资源
+│   ├── components             # 全局公用组件
+│   ├── directive              # 全局指令
+│   ├── filters                # 全局 filter
+│   ├── icons                  # 项目所有 svg icons
+│   ├── lang                   # 国际化 language
+│   ├── layouts                # 全局 layouts
+│   ├── router                 # 路由
+│   ├── store                  # 全局 store管理
+│   ├── utils                  # 全局公用方法
+│   ├── vendor                 # 公用vendor
+│   ├── views                  # views 所有页面
+│   ├── App.vue                # 入口页面
+│   ├── main.js                # 入口文件 加载组件 初始化等
+│   └── permission.js          # 权限管理
+├── tests                      # 测试
+├── .env.xxx                   # 环境变量配置
+├── .cz-config.js              # git cz 配置模版
+├── .commitlint.config.js      # 检查git提交描述是否符合规范要求
+├── vue.config.js              # vue-cli 配置
+└── package.json               # package.json eslint 配置项
+```
 # 编程规范（eslint 校验及 git 提交）
 ## eslint 配置
 
@@ -239,6 +271,46 @@ module.exports = {
 // index.scss
 // @import "reset";
 ```
+## scss 全局变量
+在使用公共的如 `variable.scss`、`mixin.scss` 时，通过配置 [vue.config.js](https://cli.vuejs.org/zh/guide/css.html#%E5%90%91%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8-loader-%E4%BC%A0%E9%80%92%E9%80%89%E9%A1%B9) 全局导入的方式，解决多文件引入 `variable`、`mixin`
+
+```JavaScript
+module.exports = {
+    css: {
+        loaderOptions: {
+            scss: {
+              additionalData: '@import "~@/assets/scss/variable.scss"'
+            }
+        }
+    }
+}
+
+// 使用
+// variable.scss  $width: 210px;
+// 某单文件组件，直接使用 $width，不需要单独引入 variable.scss
+.container {
+    width: $width
+}
+```
+## scss 与 js 共享变量
+> 在scss中通过 [:export](https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass) 进行导出，在js 中可以通过 ESM 进行导入
+
+- variable.scss
+
+```scss
+    ...
+    $siderWidth: 210px;
+    :export {
+        ...
+        siderWidth: $siderWidth;
+    }
+```
+- .vue
+
+```JavaScript
+ ...
+```
+
 
 # 模式和环境变量
 ## 模式
@@ -357,10 +429,88 @@ index.ts
     const store = userStore()
     store.login({...})
 ```
-# 登陆存储token
+# 登陆存储token并在request headers中携带token
 在获取到token之后，我们会把token进行缓存，分为两种形式：
     1. 本地缓存： token没过期时，自动登录
-    2. 全局状态管理：vuex、pinia...
+    2. 全局状态管理：vuex、pinia...  
+## 存储
+
+```JavaScript
+import { userStore } from '@/store'
+import { TOKEN } from '@/constant'
+import Storage from '@/utils/Storage'
+const store = userStore()
+const storage = new Storage()
+// 登陆成功后
+...
+    const {data } = await store.login(formData.value)
+    store.token = data.token
+    storage.setItem(TOKEN, data.token)
+```
+
+## request headers 携带 token
+
+```JavaScript
+ // utils/axios.ts
+ import axios, { AxiosRequestHeaders } from 'axios'
+ ...
+ axios请求拦截
+ service.interceptors.request.use((config) => {
+    const store = userStore();
+    (config.headers as AxiosRequestHeaders).Authorization = `Bearer ${store.token}`
+    return config
+}, e => {
+    return Promise.reject(e)
+})
+```
+
+# 数据mock
+本项目采用fastomck，进行数据模拟，[fastmock](https://www.fastmock.site)一个脱离原项目的在线Mock平台，可以让你在没有后端程序的情况下能真实地在线模拟ajax请求，本地零开发，使用简单，只要熟悉Mock.js，那你就可以轻松模拟各种数据。
+
+# 登陆权限验证
+> 已登陆，不允许跳转登陆页面、未登陆只能跳白名单页面
+
+```JavaScript
+// router/guard/permission.ts
+import { Router } from 'vue-router'
+import { userStore } from '@/store'
+const whitePathList: string[] = ['/login']
+export const permissionGuard = (router: Router) => {
+    router.beforeEach(async (to, from, next) => {
+        const store = userStore()
+        if (store.token) {
+            if (to.path === '/login') {
+                next('/')
+            } else {
+                next()
+            }
+        } else {
+            if (whitePathList.indexOf(to.path) > -1) {
+                next()
+            } else {
+                next('/login')
+            }
+        }
+    })
+}
+```
+
+# 获取用户信息
+> 登陆成功后，用户信息不存在，则请求接口，获取用户信息
+
+```JavaScript
+import { userStore } from '@/store'
+router.beforeEach(async (to, from, next) => {
+    const store = userStore()
+    ...
+    //登陆成功，用户信息为空，请求用户信息接口
+    if (!store.userinfo) {
+     const { data } = await store.getUserInfo()
+     store.userinfo = data
+    }
+    ...
+}
+```
     
 
 

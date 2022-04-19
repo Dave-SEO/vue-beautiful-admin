@@ -5,16 +5,16 @@
             <el-col :span="10" class="login-col">
                 <div class="login">
                     <h1 class="login-title">administrator</h1>
-                    <el-form :model="formData" :rules="rules">
-                        <el-form-item prop="userName">
-                            <el-input type="text" v-model="formData.userName" :prefix-icon="User" size="large"
+                    <el-form :model="formData" :rules="rules" ref="ruleFormRef">
+                        <el-form-item prop="username">
+                            <el-input type="text" v-model="formData.username" :prefix-icon="User" size="large"
                                 placeholder="请输入用户名" />
                         </el-form-item>
-                        <el-form-item prop="pwd">
-                            <el-input type="password" v-model="formData.pwd" :prefix-icon="Lock" size="large"
+                        <el-form-item prop="password">
+                            <el-input type="password" v-model="formData.password" :prefix-icon="Lock" size="large"
                                 show-password placeholder="请输入密码" />
                         </el-form-item>
-                        <el-button type="primary" round class="btn-login" size="large">登陆</el-button>
+                        <el-button type="primary" round class="btn-login" size="large" @click="methods.login(ruleFormRef)">登陆</el-button>
                     </el-form>
                 </div>
             </el-col>
@@ -26,16 +26,39 @@
 import { ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import { userStore } from '@/store'
+import type { FormInstance } from 'element-plus'
+import Storage from '@/utils/Storage'
+import { TOKEN } from '@/constant'
+import { useRouter } from 'vue-router'
+
 const formData = ref({
-    userName: 'superAdmin',
-    pwd: '123456'
+    username: 'admin',
+    password: '123456'
 })
 const rules = ref({
-    userName: [{ required: true, message: '请填写你的用户名', trigger: 'blur' }],
-    pwd: [{ required: true, message: '请填写你的密码', trigger: 'blur' }]
+    username: [{ required: true, message: '请填写你的用户名', trigger: 'blur' }],
+    password: [{ required: true, message: '请填写你的密码', trigger: 'blur' }]
 })
 const store = userStore()
-store.login({})
+const router = useRouter()
+
+const ruleFormRef = ref<FormInstance>()
+const storage = new Storage()
+const methods = {
+    login: (formEl: FormInstance | undefined) => {
+      if (!formEl) return
+      formEl.validate(async (valid, fields) => {
+        if (valid) {
+         const { code, data } = await store.login(formData.value)
+         store.token = data.token
+         storage.setItem(TOKEN, data.token)
+         router.push('/')
+        } else {
+            console.log('error submit!', fields)
+          }
+        })
+    }
+}
 </script>
 
 <style lang="scss" scoped>
