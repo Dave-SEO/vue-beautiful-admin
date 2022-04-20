@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { login as getlogin, userinfo } from '@/api'
 import Storage from '@/utils/Storage'
-import { TOKEN } from '@/constant'
+import { TOKEN, Page, LONG_TIME_STAMP, TIME_STAMP } from '@/constant'
+
 const store = new Storage()
 interface LoginReturnParams {
     code: number;
@@ -29,6 +30,7 @@ interface StateProps {
     token: string;
     userinfo: UserInfoProps | null
 }
+
 export const userStore = defineStore('user', {
     state: (): StateProps => ({
         token: store.getItem<string>(TOKEN),
@@ -38,8 +40,13 @@ export const userStore = defineStore('user', {
     actions: {
         login(data: any): Promise<LoginReturnParams> {
             return new Promise((resolve, reject) => {
-               getlogin(data).then(res => {
-                    resolve(res as any)
+               getlogin<LoginReturnParams>(data).then(res => {
+                    this.token = res.data.token
+                    store.setItem(TOKEN, res.data.token)
+                    // 当前登陆时间
+                    store.setItem(TIME_STAMP, Date.now())
+                    this.router.push(Page.HOME)
+                    resolve(res)
                 }).catch(e => {
                     reject(e)
                 })
@@ -48,11 +55,17 @@ export const userStore = defineStore('user', {
         getUserInfo(): Promise<UserInfoReturnParams> {
             return new Promise((resolve, reject) => {
                 userinfo().then(res => {
-                     resolve(res as any)
+                     resolve(res)
                  }).catch(e => {
                      reject(e)
                  })
              })
+        },
+        logout() {
+            store.removeItem(TOKEN)
+            this.token = ''
+            this.userinfo = null
+            this.router.push('/login')
         }
     }
 })

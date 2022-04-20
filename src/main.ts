@@ -5,9 +5,11 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '@/assets/scss/index.scss'
 import { createPinia } from 'pinia'
+import { myPiniaPlugin } from '@/store'
 const store = createPinia()
-const app = createApp(App)
-app.use(router)
-app.use(ElementPlus)
-app.use(store)
-app.mount('#app')
+store.use(myPiniaPlugin)
+createApp(App)
+.use(store)
+.use(router)
+.use(ElementPlus)
+.mount('#app')

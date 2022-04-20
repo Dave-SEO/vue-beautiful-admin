@@ -429,6 +429,18 @@ index.ts
     const store = userStore()
     store.login({...})
 ```
+## 插件
+比如在pinia状态管理里需要路由跳转功能，直接导入 `vue-router` useRouter() 是undefined，可以使用 `pinia` 的插件机制导入 `router` 实例
+
+```JavaScript
+    import { createPinia } from 'pinia'
+    import { markRaw } from 'vue'
+    import router from '@/router'
+    const pinia = createPinia()
+    pinia.use(({store}) => {
+        store.router = markRaw(router)
+    })
+```
 # 登陆存储token并在request headers中携带token
 在获取到token之后，我们会把token进行缓存，分为两种形式：
     1. 本地缓存： token没过期时，自动登录
@@ -511,6 +523,16 @@ router.beforeEach(async (to, from, next) => {
     ...
 }
 ```
+
+# 退出登陆
+退出登陆分为两种情况：
+1. 用户主动退出
+2. token 过期 或 被其他人登陆（单点登录）
+
+不管什么情况，退出登陆时的操作都是固定的：
+1. 清除用户缓存数据
+2. 清理权限配置
+3. 返回登陆页
     
 
 

@@ -27,9 +27,6 @@ import { ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import { userStore } from '@/store'
 import type { FormInstance } from 'element-plus'
-import Storage from '@/utils/Storage'
-import { TOKEN } from '@/constant'
-import { useRouter } from 'vue-router'
 
 const formData = ref({
     username: 'admin',
@@ -40,19 +37,14 @@ const rules = ref({
     password: [{ required: true, message: '请填写你的密码', trigger: 'blur' }]
 })
 const store = userStore()
-const router = useRouter()
 
 const ruleFormRef = ref<FormInstance>()
-const storage = new Storage()
 const methods = {
     login: (formEl: FormInstance | undefined) => {
       if (!formEl) return
       formEl.validate(async (valid, fields) => {
         if (valid) {
-         const { code, data } = await store.login(formData.value)
-         store.token = data.token
-         storage.setItem(TOKEN, data.token)
-         router.push('/')
+         await store.login(formData.value)
         } else {
             console.log('error submit!', fields)
           }
