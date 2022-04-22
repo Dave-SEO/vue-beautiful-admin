@@ -63,6 +63,7 @@ export const userStore = defineStore('user', {
         },
         logout() {
             store.removeItem(TOKEN)
+            store.removeItem(TIME_STAMP)
             this.token = ''
             this.userinfo = null
             this.router.push('/login')

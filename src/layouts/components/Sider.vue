@@ -1,11 +1,13 @@
 <template>
   <div class="sidebar-container">
-    Sider
+    <div>Hello World</div>
+    <SiderMenu />
   </div>
 </template>
 
 <script lang='ts' setup>
 import {} from 'vue'
+import SiderMenu from './SiderMenu.vue'
 </script>
 <style lang="scss" scoped>
 .sidebar-container{

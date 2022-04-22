@@ -8,6 +8,8 @@ export const isTimeout = () => {
     const store = new Storage()
     const current = Date.now()
     const oldTime = store.getItem(TIME_STAMP)
-    // 时间差的毫秒数
-    return current - oldTime > LONG_TIME_STAMP
+    if (oldTime) {
+      return current - oldTime > LONG_TIME_STAMP
+    }
+    return false
 }

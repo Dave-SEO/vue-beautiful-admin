@@ -533,6 +533,9 @@ router.beforeEach(async (to, from, next) => {
 1. 清除用户缓存数据
 2. 清理权限配置
 3. 返回登陆页
+
+# 根据路由表动态生成左侧菜单栏
+
     
 
 
