@@ -39,13 +39,66 @@ const privateRoute: Array<RouteRecordRaw> = [
         }
       }
     ]
+  },
+  {
+    path: '/article',
+    component: layouts,
+    meta: {
+      title: 'article',
+      icon: 'icon-article'
+    },
+    children: [
+      {
+        path: '/create',
+        name: 'create',
+        component: import('@/views/user/manage.vue'),
+        meta: {
+          title: 'create',
+          icon: 'icon-create'
+        }
+      },
+      {
+        path: '/detail',
+        name: 'detail',
+        component: import('@/views/user/manage.vue'),
+        meta: {
+          title: 'manage',
+          icon: 'icon-manage'
+        }
+      },
+      {
+        path: '/ranling',
+        name: 'ranling',
+        component: import('@/views/user/manage.vue'),
+        meta: {
+          title: 'manage',
+          icon: 'icon-manage'
+        }
+      }
+    ]
   }
 ]
 const publicRoute: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'home',
-    component: () => import('@/views/home/home.vue')
+    component: layouts,
+    redirect: '/usercenter',
+    children: [
+      {
+        path: '/usercenter',
+        name: 'usercenter',
+        component: import('@/views/user_center/index.vue'),
+        meta: {
+          title: 'usercenter',
+          icon: 'icon-usercenter'
+        }
+      },
+      {
+        path: '/404',
+        name: '404',
+        component: import('@/views/sys/404.vue')
+      }
+    ]
   },
   {
     path: '/login',

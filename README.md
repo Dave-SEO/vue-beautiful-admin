@@ -534,7 +534,89 @@ router.beforeEach(async (to, from, next) => {
 2. 清理权限配置
 3. 返回登陆页
 
-# 根据路由表动态生成左侧菜单栏
+# 动态 menu 菜单
+> 根据路由表的配置，自动生成对应的 menu 菜单，当路由表发生变化时，menu菜单自动发生变化
+## 实现方案
+1. 定义 路由表 对应 menu 菜单规则
+2. 根据规则制定路由表
+3. 根据规则，依据路由表，生成对应菜单
+
+对于单个路由规则而言：
+如果 meta && meta.title && meta.icon 则显示在菜单中，其中title为显示的菜单名，icon为该菜单项的图标
+如果存在children：则以 el-sub-menu（子菜单）展示，否则 以 el-menu-item （菜单项）展示
+
+## 路由表划分
+1. publicRouters  公有路由表（无权限）
+2. privateRouters 私有路由表（权限路由）
+
+
+```JavaScript
+// 私有路由
+const privateRouters = [
+    {
+        path: '/user',
+        component: layouts,
+        redirect: '/user/manage',
+        meta: {
+            title: 'user',
+            icon: 'icon-user'
+        },
+        children: [
+           {
+            path: '/manage',
+            name: 'manage',
+            component: import('@/views/user/manage.vue'),
+            meta: {
+              title: 'manage',
+              icon: 'icon-manage'
+            }
+          },
+          ...
+        ]
+    }
+]
+
+// 公有路由
+const publicRouters = [
+    {
+        path: '/',
+        component: layouts,
+        redirect: '/userCenter',
+        children: [
+            {
+                path: 'userCenter',
+                name: 'userCenter',
+                component: import('@/views/userCenter.vue'),
+                mate: {
+                    title: 'userCenter',
+                    icon: 'icon-userCenter'
+                }
+            },
+            {
+                path: '/404',
+                name: 'error-404',
+                component: import('@/views/sys/404.vue')
+            }
+        ]
+    }
+]
+```
+
+## 获取路由表数据
+1. router.options.routers: 初始路由列表（新增的路由无法获取）
+2. router.getRoutes(): 获取所有路由记录的完整列表
+
+这里我们使用 router.getRoutes()
+通过打印 getRoutes() 发现有两个问题：
+1. 重复路由
+2. 不符合 meta && meta.title && meta.icon 规则的不应该存在
+
+## 根据路由规则处理路由表
+创建文件 utils/route 处理上述两个问题
+1. filterRouters 处理脱离层级的路由
+2. generateMenus 根据 routers 数据 返回对应的 menu 规则数据
+
+
 
     
 
