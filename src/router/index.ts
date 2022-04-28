@@ -7,7 +7,7 @@ const privateRoute: Array<RouteRecordRaw> = [
     component: layouts,
     redirect: '/user/manage',
     meta: {
-      title: 'user',
+      title: '用户',
       icon: 'icon-personnel'
     },
     children: [
@@ -16,7 +16,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'manage',
         component: import('@/views/user/manage.vue'),
         meta: {
-          title: 'manage',
+          title: '员工管理',
           icon: 'icon-manage'
         }
       },
@@ -25,7 +25,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'roleList',
         component: import('@/views/user/roleList.vue'),
         meta: {
-          title: 'roleList',
+          title: '角色列表',
           icon: 'icon-role'
         }
       },
@@ -34,7 +34,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'promiseList',
         component: import('@/views/user/promiseList.vue'),
         meta: {
-          title: 'promiseList',
+          title: '权限列表',
           icon: 'icon-promise'
         }
       }
@@ -44,7 +44,7 @@ const privateRoute: Array<RouteRecordRaw> = [
     path: '/article',
     component: layouts,
     meta: {
-      title: 'article',
+      title: '文章',
       icon: 'icon-article'
     },
     children: [
@@ -53,7 +53,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'create',
         component: import('@/views/user/manage.vue'),
         meta: {
-          title: 'create',
+          title: '创建文章',
           icon: 'icon-create'
         }
       },
@@ -62,7 +62,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'detail',
         component: import('@/views/user/manage.vue'),
         meta: {
-          title: 'manage',
+          title: '文章详情',
           icon: 'icon-manage'
         }
       },
@@ -71,7 +71,7 @@ const privateRoute: Array<RouteRecordRaw> = [
         name: 'ranling',
         component: import('@/views/user/manage.vue'),
         meta: {
-          title: 'manage',
+          title: '文章排名',
           icon: 'icon-manage'
         }
       }
@@ -89,7 +89,7 @@ const publicRoute: Array<RouteRecordRaw> = [
         name: 'usercenter',
         component: import('@/views/user_center/index.vue'),
         meta: {
-          title: 'usercenter',
+          title: '个人中心',
           icon: 'icon-usercenter'
         }
       },
