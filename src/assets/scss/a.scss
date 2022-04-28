@@ -1,0 +1,13 @@
+$siderWidth: 210px;
+$siderBg: rgb(48 65 86);
+$menuTextColor: #fff;
+$menuActiveTextColor: #409eff;
+// https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
+// js 与 scss 共享变量，在scss中通过 :export 进行导出，在js 中可以通过 ESM 进行导入
+
+:export {
+  siderWidth: $siderWidth;
+  siderBg: $siderBg;
+  menuTextColor: $menuTextColor;
+  menuActiveTextColor: $menuActiveTextColor;
+}

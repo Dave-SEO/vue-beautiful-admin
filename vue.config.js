@@ -1,5 +1,6 @@
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
-module.exports = {
+const { defineConfig } = require('@vue/cli-service')
+module.exports = defineConfig({
     css: {
         loaderOptions: {
             scss: {
@@ -13,3 +14,4 @@ module.exports = {
           ]
     }
 }
+)
